@@ -6,6 +6,7 @@
 import React, {
   AppRegistry,
   Component,
+  Navigator,
   StyleSheet,
   Text,
   View
@@ -13,6 +14,16 @@ import React, {
 
 import Token from './src/components/GetAuthToken.js'
 import FacebookLogin from './src/components/FacebookLogin.js'
+import AppRouter from './src/AppRouter.js'
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: '#F5FCFF',
+  }
+});
 
 class CrimeReporter extends Component {
 
@@ -39,7 +50,7 @@ class CrimeReporter extends Component {
     })
   };
 
-  render() {
+  renderLogin = () => {
     let profile = this.state.facebookProfile;
     return (
       <View style={styles.container}>
@@ -57,16 +68,42 @@ class CrimeReporter extends Component {
         }
       </View>
     );
+  };
+
+  renderNav = () => {
+    return (
+      <View style={styles.container} >
+        <Navigator
+          initialRoute={{ name: 'Home', index: 0 }}
+          renderScene={(route, navigator) => {
+            <AppRouter
+              name={route.name}
+              default={ 'Home' }
+              onForward={() => {
+                nextIndex++
+                navigator.push({
+                  name: 'Scene ' + nextIndex,
+                  index: nextIndex,
+                });
+              }}
+              onBack={() => {
+                if (route.index > 0) {
+                  navigator.pop()
+                }
+              }}
+            />
+          }}
+        />
+      </View>
+    )
+  };
+
+  render() {
+    let profile = this.state.facebookProfile;
+    let token = this.state.token;
+    let loggedIn = token && profile;
+    return loggedIn ? this.renderNav() : this.renderLogin();
   }
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  }
-});
 
 AppRegistry.registerComponent('CrimeReporter', () => CrimeReporter);

@@ -21,6 +21,7 @@ export default class Login extends Component {
     this.state = {
       message: null
     }
+    this.handleSubmit();
   };
 
   handleSubmit = () => {
