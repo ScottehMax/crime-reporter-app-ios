@@ -11,10 +11,13 @@ import React, {
   View
 } from 'react-native';
 
+import Login from './src/components/Login.js'
+
 class CrimeReporter extends Component {
   render() {
     return (
       <View style={styles.container}>
+        <Login />
         <Text style={styles.welcome}>
           Welcome to React Native!
         </Text>
