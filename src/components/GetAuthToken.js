@@ -37,7 +37,7 @@ export default class Login extends Component {
       Alert.alert(
         'Request Failed',
         `Tried to connect to ${url}\n\nPlease try again soon.\nDo you have an internet connection?\nPotentially the server could be offline.`
-      )
+      );
     })
   };
 

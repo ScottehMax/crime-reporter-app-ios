@@ -12,14 +12,24 @@ import React, {
 } from 'react-native';
 
 import Token from './src/components/GetAuthToken.js'
+import FacebookLogin from './src/components/FacebookLogin.js'
 
 class CrimeReporter extends Component {
 
   componentWillMount() {
     this.state = {
-      token: null
+      token: null,
+      facebookProfile: null
     };
   }
+
+  handleFacebook = (p) => {
+    this.setState({
+      facebookProfile: p
+    }, () => {
+      console.log(this.state);
+    })
+  };
 
   handleToken = (t) => {
     this.setState({
@@ -30,8 +40,15 @@ class CrimeReporter extends Component {
   };
 
   render() {
+    let profile = this.state.facebookProfile;
     return (
       <View style={styles.container}>
+        <FacebookLogin updateState={ this.handleFacebook } />
+        { profile &&
+          <Text>
+            { `ID:\t${profile.id}\nName:\t${profile.name}\nEmail:\t${profile.email}` }
+          </Text>
+        }
         <Token updateState={ this.handleToken } />
         { this.state.token &&
           <Text>
@@ -49,17 +66,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
-  },
-  welcome: {
-    fontSize: 20,
-    textAlign: 'center',
-    margin: 10,
-  },
-  instructions: {
-    textAlign: 'center',
-    color: '#333333',
-    marginBottom: 5,
-  },
+  }
 });
 
 AppRegistry.registerComponent('CrimeReporter', () => CrimeReporter);
