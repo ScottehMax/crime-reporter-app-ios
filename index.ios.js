@@ -11,20 +11,33 @@ import React, {
   View
 } from 'react-native';
 
+import Token from './src/components/GetAuthToken.js'
+
 class CrimeReporter extends Component {
+
+  componentWillMount() {
+    this.state = {
+      token: null
+    };
+  }
+
+  handleToken = (t) => {
+    this.setState({
+      token: t
+    }, () => {
+      console.log(this.state);
+    })
+  };
+
   render() {
     return (
       <View style={styles.container}>
-        <Text style={styles.welcome}>
-          Welcome to React Native!
-        </Text>
-        <Text style={styles.instructions}>
-          To get started, edit index.ios.js
-        </Text>
-        <Text style={styles.instructions}>
-          Press Cmd+R to reload,{'\n'}
-          Cmd+D or shake for dev menu
-        </Text>
+        <Token updateState={ this.handleToken } />
+        { this.state.token &&
+          <Text>
+            { this.state.token }
+          </Text>
+        }
       </View>
     );
   }
