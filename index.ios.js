@@ -7,12 +7,7 @@ import React, {
   AppRegistry,
   Component,
   StyleSheet,
-  Text,
-  View,
-  Image,
-  ListView,
-  TouchableHighlight,
-  Alert,
+  View
 } from 'react-native';
 
 import Token from './src/components/GetAuthToken.js'
