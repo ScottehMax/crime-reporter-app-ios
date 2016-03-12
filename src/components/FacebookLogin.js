@@ -9,7 +9,8 @@ import { FBSDKGraphRequest } from 'react-native-fbsdkcore';
 export default class FacebookLogin extends Component {
 
   render() {
-    let updateState = this.props.updateState;
+    let onLogin = this.props.onLogin;
+    let onLogout = this.props.onLogout;
     return (
       <View>
         <FBSDKLoginButton
@@ -24,13 +25,13 @@ export default class FacebookLogin extends Component {
                   if (error) {
                     alert('Error making request.');
                   } else {
-                    updateState(result)
+                    onLogin(result)
                   }
                 }, '/me?fields=id,name,email').start()
               }
             }
           }}
-          onLogoutFinished={() => alert('Logged out.')}
+          onLogoutFinished={ onLogout }
           readPermissions={['email']}
           publishPermissions={[]}/>
       </View>
