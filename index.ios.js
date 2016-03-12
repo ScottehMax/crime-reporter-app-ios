@@ -18,9 +18,18 @@ class CrimeReporter extends Component {
 
   componentWillMount() {
     this.state = {
-      token: null
+      token: null,
+      facebookProfile: null
     };
   }
+
+  handleFacebook = (p) => {
+    this.setState({
+      facebookProfile: p
+    }, () => {
+      console.log(this.state);
+    })
+  };
 
   handleToken = (t) => {
     this.setState({
@@ -31,9 +40,15 @@ class CrimeReporter extends Component {
   };
 
   render() {
+    let profile = this.state.facebookProfile;
     return (
       <View style={styles.container}>
-        <FacebookLogin />
+        <FacebookLogin updateState={ this.handleFacebook } />
+        { profile &&
+          <Text>
+            { `ID:\t${profile.id}\nName:\t${profile.name}\nEmail:\t${profile.email}` }
+          </Text>
+        }
         <Token updateState={ this.handleToken } />
         { this.state.token &&
           <Text>
