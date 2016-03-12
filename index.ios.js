@@ -33,6 +33,11 @@ class CrimeReporter extends Component {
     return (
       <View style={styles.container}>
         <Token updateState={ this.handleToken } />
+        { this.state.token &&
+          <Text>
+            { this.state.token }
+          </Text>
+        }
       </View>
     );
   }

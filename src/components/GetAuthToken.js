@@ -8,12 +8,6 @@ import React, {
 const HOST_URL = 'http://localhost:3000';
 
 const styles = {
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  },
   text: {
     fontSize: 16,
     textAlign: 'center',
@@ -49,11 +43,9 @@ export default class Login extends Component {
 
   render = () => {
     return (
-      <View style={styles.container} >
-        <Text onPress={ this.handleSubmit } style={styles.text} >
-          Get Authenticity Token
-        </Text>
-      </View>
+      <Text onPress={ this.handleSubmit } style={styles.text} >
+        Get Authenticity Token
+      </Text>
     );
   };
 
