@@ -14,7 +14,8 @@ import React, {
   ScrollView,
   TouchableOpacity,
   TouchableHighlight,
-  TextInput
+  TextInput,
+  ListView
 } from 'react-native';
 
 import FacebookLogin from './src/components/FacebookLogin.js'
@@ -24,6 +25,14 @@ import Identity from './src/data/Identity.js';
 
 // const HOST_URL = 'http://localhost:3000'
 const HOST_URL = 'https://crimereporter.herokuapp.com'
+
+var reports = [{
+  name: 'Scott Maxwell',
+  email: 'wsemax@gmail.com',
+  details: 'I got attacked by a gang of cats. This really happened fur real, I\'m paws-itive!',
+  progress: 'Completed',
+}];
+
 
 class NavButton extends React.Component {
   render() {
@@ -51,7 +60,7 @@ var NavigationBarRouteMapper = {
         onPress={() => navigator.pop()}
         style={styles.navBarLeftButton}>
         <Text style={[styles.navBarText, styles.navBarButtonText]}>
-          {previousRoute.title}
+          Back
         </Text>
       </TouchableOpacity>
     );
@@ -108,9 +117,16 @@ class NavigationBarSample extends Component {
     }
     this.state = {
       token: null,
-      facebookProfile: fbProfile
+      facebookProfile: fbProfile,
+      dataSource: new ListView.DataSource({
+          rowHasChanged: (row1, row2) => row1 !== row2,
+      })
     };
+
+    console.log('ok');
+    console.log(reports);
     this.handleToken();
+    this.state.dataSource.cloneWithRows(reports)
 
   }
 
@@ -182,6 +198,41 @@ class NavigationBarSample extends Component {
   }
 
   sendDetails = () => {
+    reports.push({
+      name: this.state.name,
+      email: this.state.email,
+      details: this.state.text,
+      progress: 'Accepted',
+    });
+    console.log('ko');
+    console.log(reports);
+    this.setState({dataSource: this.state.dataSource.cloneWithRows(reports)});
+    let info = {}
+    console.log({
+      name: this.state.name,
+      email: this.state.email,
+      details: this.state.text
+    });
+    let url = 'http://requestb.in/18iswm21';
+    fetch(url, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': this.state.token,
+      },
+      body: JSON.stringify({
+        name: 'Scott Maxwell',
+        email: 'wsemax@gmail.com',
+        details: this.state.text
+      })
+    }).then((res) => {
+      console.log(res);
+      Alert.alert(
+        'Completed',
+        'Report submitted! Thank you for your cooperation.'
+      );
+    })
     // do sending details to rails server here
   };
 
@@ -208,40 +259,58 @@ class NavigationBarSample extends Component {
           }
           </View>
         )
-      case 'Screen2':
+      case 'Submit a Report':
         return (
           <View style={styles.container}>
             <Text>Full Name</Text>
             <TextInput
               style={{marginLeft: 20, marginRight: 20, marginBottom:10, height: 20, borderColor: 'gray', borderWidth: 1}}
-              onChangeText={(text) => this.setState({text})}
-              value={this.state.text}
+              onChangeText={(text) => this.setState({name: text})}
+              value={this.state.name}
               defaultValue={profile.name}
             />
             <Text>Email Address</Text>
             <TextInput
               style={{marginLeft: 20, marginRight: 20, marginBottom:10, height: 20, borderColor: 'gray', borderWidth: 1}}
-              onChangeText={(text) => this.setState({text})}
-              value={this.state.text}
+              onChangeText={(text) => this.setState({email: text})}
+              value={this.state.email}
               defaultValue={profile.email}
             />
             <Text>Further Details</Text>
             <TextInput
+              defaultValue={"Enter more details here."}
               multiline={true}
-              onChangeText={(text) => this.setState({text})}
+              onChangeText={(text) => this.setState({text: text})}
               value={this.state.text}
               style={{marginLeft: 20, marginRight: 20, marginBottom:10, height: 200, borderColor: 'gray', borderWidth: 1}}
             />
-            <NavButton onClick={this.sendDetails} text={"Send details"}></NavButton>
+            <TouchableHighlight
+              style={styles.button}
+              underlayColor="#A5A5A5"
+              onPress={this.sendDetails}>
+              <Text style={styles.buttonText}>Send details</Text>
+            </TouchableHighlight>
           </View>
         )
-      case 'Screen3':
+      case 'List of Reports':
+        console.log(reports);
         return (
-          <View style={styles.container}>
-            <Text>Fuck sake</Text>
-          </View>
-        )
+            <ListView
+              dataSource={this.state.dataSource}
+              renderRow={this.renderReport}
+              style={styles.listView}
+            />
+        );
     }
+  }
+
+  renderReport(report) {
+    return (
+      <View style={styles.container}>
+        <Text style={styles.title}>{report.details}</Text>
+        <Text style={styles.year}>{report.progress}</Text>
+      </View>
+    )
   }
 
   render() {
@@ -265,7 +334,7 @@ class NavigationBarSample extends Component {
 };
 
 
-var scenes = ['Screen2', 'Screen3'];
+var scenes = ['Submit a Report', 'List of Reports'];
 
 
 
@@ -455,6 +524,18 @@ const styles = StyleSheet.create({
     flex: 1,
     paddingTop: 20,
     backgroundColor: '#EAEAEA',
+  },
+  listView: {
+    paddingTop: 65,
+    backgroundColor: '#F5FCFF',
+  },
+  year: {
+    fontSize: 20,
+    marginBottom: 8,
+    textAlign: 'center',
+  },
+  title: {
+    textAlign: 'center',
   },
 });
 
