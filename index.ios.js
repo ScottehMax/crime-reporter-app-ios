@@ -208,8 +208,14 @@ class NavigationBarSample extends Component {
       console.log(res);
       if (res.status == 200) {
         let response = JSON.parse(res._bodyText)
+        let s_s = response.statements
+        s_s.map((s) => {
+          let something = s.statement
+          something.resolved = s.resolved
+          return something
+        })
         this.setState({
-          statements: response.statements,
+          statements: s_s,
           dataSource: this.state.dataSource.cloneWithRows(response.statements)
         });
       }
@@ -237,7 +243,9 @@ class NavigationBarSample extends Component {
         content: this.state.statementContent
       })
     }).then((res) => {
-      let s = JSON.parse(res._bodyText).statement
+      let s = {}
+      s.statement = JSON.parse(res._bodyText).statement
+      s.resolved = JSON.parse(res._bodyText).resolved
       if (res.status == 201) {
         let statements = this.state.statements;
         statements.push(s);
@@ -306,18 +314,19 @@ class NavigationBarSample extends Component {
       return (
         <ListView
           dataSource={this.state.dataSource}
-          renderRow={this.renderReport}
+          renderRow={this.renderStatement}
           style={styles.listView}
           />
       );
     }
   }
 
-  renderReport(report) {
+  renderStatement(statement) {
+    console.log(statement);
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>{report.content}</Text>
-        <Text style={styles.year}>{report.progress}</Text>
+        <Text style={styles.title}>{statement.statement.content}</Text>
+        <Text style={styles.year}>{statement.resolved ? 'Resolved' : 'In progress'}</Text>
       </View>
     )
   }
