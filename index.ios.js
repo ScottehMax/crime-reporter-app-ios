@@ -7,41 +7,33 @@ import React, {
   Alert,
   AppRegistry,
   Component,
-  Navigator,
   StyleSheet,
   Text,
   View
 } from 'react-native';
 
-import FacebookLogin from './src/components/FacebookLogin.js'
-import AppRouter from './src/AppRouter.js'
-
 import Identity from './src/data/Identity.js';
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: '#F5FCFF',
-  }
-});
+import Login from './src/components/Login.js';
+import Incidents from './src/components/Incidents.js';
 
 // const HOST_URL = 'http://localhost:3000'
 const HOST_URL = 'https://crimereporter.herokuapp.com'
 
 class CrimeReporter extends Component {
 
+  static fbId = Identity.objects('Identity').filtered('name = "FacebookId"');
+  static fbName = Identity.objects('Identity').filtered('name = "FacebookName"');
+  static fbEmail = Identity.objects('Identity').filtered('name = "FacebookEmail"');
+
   componentWillMount() {
-    let fbId = Identity.retrieve('FacebookId', Identity.db);
-    let fbName = Identity.retrieve('FacebookName', Identity.db);
-    let fbEmail = Identity.retrieve('FacebookEmail', Identity.db);
     let fbProfile;
-    if (fbId && fbName && fbEmail) {
+    if (this.fbId && this.fbId.length > 0 &&
+        this.fbName && this.fbName.length > 0 &&
+        this.fbEmail && this.fbEmail.length > 0) {
       fbProfile = {
-        id: fbId['data'],
-        name: fbName['data'],
-        email: fbEmail['data']
+        id: this.fbId[0]['data'],
+        name: this.fbName[0]['data'],
+        email: this.fbEmail[0]['data']
       }
     }
     this.state = {
@@ -52,18 +44,29 @@ class CrimeReporter extends Component {
   }
 
   handleFacebookLogin = (p) => {
-    Identity.write('FacebookId', p.id, Identity.db);
-    Identity.write('FacebookName', p.name, Identity.db);
-    Identity.write('FacebookEmail', p.email, Identity.db);
+    Identity.write(() => {
+      Identity.create('Identity', {
+        name: 'FacebookId',
+        data: p.id
+      })
+      Identity.create('Identity', {
+        name: 'FacebookName',
+        data: p.name
+      })
+      Identity.create('Identity', {
+        name: 'FacebookEmail',
+        data: p.email
+      })
+    })
     this.setState({
       facebookProfile: p
     }, this.handleLogin )
   };
 
   handleFacebookLogout = () => {
-    Identity.delete('FacebookId', Identity.db);
-    Identity.delete('FacebookName', Identity.db);
-    Identity.delete('FacebookEmail', Identity.db);
+    Identity.write(() => {
+      Identity.delete([this.fbId, this.fbName, this.fbEmail]);
+    })
     this.setState({
       facebookProfile: null
     })
@@ -85,7 +88,12 @@ class CrimeReporter extends Component {
     }).then((res) => {
       let user = JSON.parse(res._bodyText).user
       console.log("Retrieved user\t" + JSON.stringify(user));
-      Identity.write('UserAuthToken', user.auth_token, Identity.db);
+      Identity.write(() => {
+        Identity.create('Identity', {
+          name: 'UserAuthToken',
+          data: user.auth_token
+        });
+      })
     }).catch((err) => {
       console.log(err);
     })
@@ -113,58 +121,12 @@ class CrimeReporter extends Component {
     })
   };
 
-  renderLogin = () => {
+  render = () => {
     let profile = this.state.facebookProfile;
-    return (
-      <View style={styles.container}>
-        <FacebookLogin
-          onLogin={ this.handleFacebookLogin }
-          onLogout={ this.handleFacebookLogout }
-        />
-        { profile &&
-          <Text>
-            { `ID:\t${profile.id}\nName:\t${profile.name}\nEmail:\t${profile.email}` }
-          </Text>
-        }
-      </View>
-    );
+    return profile ?
+        <Login onLogin={ this.handleFacebookLogin } /> :
+        <Incidents onLogout={ this.handleFacebookLogout } />
   };
-
-  renderNav = () => {
-    return (
-      <View style={styles.container} >
-        <Navigator
-          initialRoute={{ name: 'Home', index: 0 }}
-          renderScene={(route, navigator) => {
-            <AppRouter
-              name={route.name}
-              default={ 'Home' }
-              onForward={() => {
-                nextIndex++
-                navigator.push({
-                  name: 'Scene ' + nextIndex,
-                  index: nextIndex,
-                });
-              }}
-              onBack={() => {
-                if (route.index > 0) {
-                  navigator.pop()
-                }
-              }}
-            />
-          }}
-        />
-      </View>
-    )
-  };
-
-  render() {
-    let profile = this.state.facebookProfile;
-    let token = this.state.token;
-    let loggedIn = token && profile;
-    // return loggedIn ? this.renderNav() : this.renderLogin();
-    return this.renderLogin();
-  }
 }
 
 AppRegistry.registerComponent('CrimeReporter', () => CrimeReporter);
