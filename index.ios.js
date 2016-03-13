@@ -1,7 +1,7 @@
 /**
- * Sample React Native App
- * https://github.com/facebook/react-native
- */
+* Sample React Native App
+* https://github.com/facebook/react-native
+*/
 'use strict';
 import React, {
   Alert,
@@ -23,16 +23,8 @@ import AppRouter from './src/AppRouter.js'
 
 import Identity from './src/data/Identity.js';
 
-// const HOST_URL = 'http://localhost:3000'
-const HOST_URL = 'https://crimereporter.herokuapp.com'
-
-var reports = [{
-  name: 'Scott Maxwell',
-  email: 'wsemax@gmail.com',
-  details: 'I got attacked by a gang of cats. This really happened fur real, I\'m paws-itive!',
-  progress: 'Completed',
-}];
-
+const HOST_URL = 'http://localhost:3000'
+// const HOST_URL = 'https://crimereporter.herokuapp.com'
 
 class NavButton extends React.Component {
   render() {
@@ -91,14 +83,6 @@ var NavigationBarRouteMapper = {
 
 };
 
-
-
-function newRandomRoute() {
-  return {
-    title: '#' + Math.ceil(Math.random() * 1000),
-  };
-}
-
 class NavigationBarSample extends Component {
 
   componentWillMount() {
@@ -115,106 +99,46 @@ class NavigationBarSample extends Component {
         email: fbEmail['data']
       }
     }
+    let uAT;
+    let uATr = Identity.db.objects('Identity').filtered('name = "UserAuthToken"');
+    console.log(uATr[0]['data']);
+    if (uATr.length > 0) {
+      uAT = uATr[0]['data']
+    }
     this.state = {
       token: null,
       facebookProfile: fbProfile,
+      statements: [],
+      UserAuthToken: uAT,
       dataSource: new ListView.DataSource({
-          rowHasChanged: (row1, row2) => row1 !== row2,
+        rowHasChanged: (row1, row2) => row1 !== row2,
       })
     };
 
-    console.log('ok');
-    console.log(reports);
     this.handleToken();
-    this.state.dataSource.cloneWithRows(reports)
-
   }
 
+  handleFacebookLogin = (p) => {
+    Identity.write('FacebookId', p.id, Identity.db);
+    Identity.write('FacebookName', p.name, Identity.db);
+    Identity.write('FacebookEmail', p.email, Identity.db);
+    this.setState({
+      facebookProfile: p
+    }, this.handleLogin )
+  };
 
-    handleFacebookLogin = (p) => {
-      Identity.write('FacebookId', p.id, Identity.db);
-      Identity.write('FacebookName', p.name, Identity.db);
-      Identity.write('FacebookEmail', p.email, Identity.db);
-      this.setState({
-        facebookProfile: p
-      }, this.handleLogin )
-    };
+  handleFacebookLogout = () => {
+    Identity.delete('FacebookId', Identity.db);
+    Identity.delete('FacebookName', Identity.db);
+    Identity.delete('FacebookEmail', Identity.db);
+    this.setState({
+      facebookProfile: null
+    })
+  };
 
-    handleFacebookLogout = () => {
-      Identity.delete('FacebookId', Identity.db);
-      Identity.delete('FacebookName', Identity.db);
-      Identity.delete('FacebookEmail', Identity.db);
-      this.setState({
-        facebookProfile: null
-      })
-    };
-
-    handleLogin = () => {
-      let profile = this.state.facebookProfile;
-      fetch(`${HOST_URL}/users/sign_in`, {
-        method: 'POST',
-        headers: {
-          'Accept': 'application/json',
-          'Content-Type': 'application/json',
-          'X-CSRF-Token': this.state.token,
-        },
-        body: JSON.stringify({
-          email: profile.email,
-          facebook_id: profile.id
-        })
-      }).then((res) => {
-        let user = JSON.parse(res._bodyText).user
-        console.log("Retrieved user\t" + JSON.stringify(user));
-        Identity.write('UserAuthToken', user.auth_token, Identity.db);
-      }).catch((err) => {
-        console.log(err);
-      })
-    };
-
-    handleToken = () => {
-      let url = `${HOST_URL}/status`;
-      fetch(url, {
-        method: 'GET'
-      }).then((res) => {
-        let token;
-        if (res.status == 200) {
-          token = JSON.parse(res._bodyText).token
-        }
-        this.setState({
-          token: token
-        }, () => {
-          console.log('Retrieved token:\t' + token)
-        });
-      }).catch((err) => {
-        Alert.alert(
-          'Request Failed',
-          `Tried to connect to ${url}\n\nPlease try again soon.\nDo you have an internet connection?\nPotentially the server could be offline.`
-        );
-      })
-    };
-
-  componentWillUnmount() {
-    this._listeners && this._listeners.forEach(listener => listener.remove());
-  }
-
-  sendDetails = () => {
-    reports.push({
-      name: this.state.name,
-      email: this.state.email,
-      details: this.state.text,
-      progress: 'Accepted',
-    });
-    console.log('ko');
-    console.log(reports);
-    this.setState({dataSource: this.state.dataSource.cloneWithRows(reports)});
-    let info = {}
-    console.log({
-      name: this.state.name,
-      email: this.state.email,
-      details: this.state.text
-    });
-    let url = 'http://requestb.in/18iswm21';
-    fetch(url, {
+  handleLogin = () => {
+    let profile = this.state.facebookProfile;
+    fetch(`${HOST_URL}/users/sign_in`, {
       method: 'POST',
       headers: {
         'Accept': 'application/json',
@@ -222,34 +146,124 @@ class NavigationBarSample extends Component {
         'X-CSRF-Token': this.state.token,
       },
       body: JSON.stringify({
-        name: 'Scott Maxwell',
-        email: 'wsemax@gmail.com',
-        details: this.state.text
+        email: profile.email,
+        facebook_id: profile.id
+      })
+    }).then((res) => {
+      let user = JSON.parse(res._bodyText).user
+      console.log("Retrieved user\t" + JSON.stringify(user));
+      let uats = Identity.db.objects('Identity').filtered('name = "UserAuthToken"');
+      Identity.db.write(() => {
+        if (uats.length > 0) {
+          uats[0]['data'] = user.auth_token
+        } else {
+          Identity.db.create('Identity', {
+            name: 'UserAuthToken',
+            data: user.auth_token
+          })
+        }
+      })
+    }).catch((err) => {
+      console.log(err);
+    })
+  };
+
+  handleToken = () => {
+    let url = `${HOST_URL}/status`;
+    fetch(url, {
+      method: 'GET'
+    }).then((res) => {
+      let token;
+      if (res.status == 200) {
+        token = JSON.parse(res._bodyText).token
+      }
+      this.setState({
+        token: token
+      }, () => {
+        console.log('Retrieved token:\t' + token)
+        this.handleReports()
+      });
+    }).catch((err) => {
+      Alert.alert(
+        'Request Failed',
+        `Tried to connect to ${url}\n\nPlease try again soon.\nDo you have an internet connection?\nPotentially the server could be offline.`
+      );
+    })
+  };
+
+  handleReports = () => {
+    let profile = this.state.facebookProfile;
+    let uATr = Identity.db.objects('Identity').filtered('name = "UserAuthToken"');
+    fetch(`${HOST_URL}/api/statement`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': this.state.token,
+      },
+      body: JSON.stringify({
+        auth_token: uATr[0]['data']
       })
     }).then((res) => {
       console.log(res);
-      Alert.alert(
-        'Completed',
-        'Report submitted! Thank you for your cooperation.'
-      );
+      if (res.status == 200) {
+        let response = JSON.parse(res._bodyText)
+        this.setState({
+          statements: response.statements,
+          dataSource: this.state.dataSource.cloneWithRows(response.statements)
+        });
+      }
+    }).catch((err) => {
+      console.log(err);
     })
-    // do sending details to rails server here
+  };
+
+  componentWillUnmount() {
+    this._listeners && this._listeners.forEach(listener => listener.remove());
+  }
+
+  handleSubmitStatement = () => {
+    let profile = this.state.facebookProfile;
+    let uATr = Identity.db.objects('Identity').filtered('name = "UserAuthToken"');
+    fetch(`${HOST_URL}/api/statement/new`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': this.state.token,
+      },
+      body: JSON.stringify({
+        auth_token: uATr[0]['data'],
+        content: this.state.statementContent
+      })
+    }).then((res) => {
+      let s = JSON.parse(res._bodyText).statement
+      if (res.status == 201) {
+        let statements = this.state.statements;
+        statements.push(s);
+        this.setState({
+          statements: statements,
+          dataSource: this.state.dataSource.cloneWithRows(statements)
+        });
+      }
+    }).catch((err) => {
+      console.log(err);
+    })
   };
 
   renderTheShit(route, navigator) {
     let profile = this.state.facebookProfile;
     switch(route.title) {
       case 'CrimeReporter':
-        return (
-          <View style={styles.container}>
+      return (
+        <View style={styles.container}>
           <Text style={{ marginTop: -200, marginBottom: 10, fontSize: 150, textAlign: 'center' }} >:(</Text>
-            <View style={{ marginLeft: 20, marginRight: 20, marginBottom: 30 }}>
-              <Text style={{textAlign: 'center'}}>Sorry to hear you've been involved in a crime.</Text>
-              { !profile && <Text style={{textAlign: 'center'}}>Log in via Facebook to give us more details.</Text> }
-              { profile && <Text style={{textAlign: 'center'}}>Click "Next" in the corner to give us more details.</Text> }
-            </View>
+          <View style={{ marginLeft: 20, marginRight: 20, marginBottom: 30 }}>
+            <Text style={{textAlign: 'center'}}>Sorry to hear you've been involved in a crime.</Text>
+            { !profile && <Text style={{textAlign: 'center'}}>Log in via Facebook to give us more details.</Text> }
+            { profile && <Text style={{textAlign: 'center'}}>Click "Next" in the corner to give us more details.</Text> }
+          </View>
           <FacebookLogin
-            updateState={ this.handleFacebook }
             onLogin={ this.handleFacebookLogin }
             onLogout={ this.handleFacebookLogout }/>
           { profile &&
@@ -257,57 +271,52 @@ class NavigationBarSample extends Component {
               { `ID:\t${profile.id}\nName:\t${profile.name}\nEmail:\t${profile.email}` }
             </Text>
           }
-          </View>
-        )
+        </View>
+      )
       case 'Submit a Report':
-        return (
-          <View style={styles.container}>
-            <Text>Full Name</Text>
-            <TextInput
-              style={{marginLeft: 20, marginRight: 20, marginBottom:10, height: 20, borderColor: 'gray', borderWidth: 1}}
-              onChangeText={(text) => this.setState({name: text})}
-              value={this.state.name}
-              defaultValue={profile.name}
+      return (
+        <View style={styles.container}>
+          <Text>Full Name</Text>
+          <Text
+            style={{marginLeft: 20, marginRight: 20, marginBottom:10, borderColor: 'gray', borderWidth: 1, padding: 8 }} >
+            {profile.name}
+          </Text>
+          <Text>Email</Text>
+          <Text
+            style={{marginLeft: 20, marginRight: 20, marginBottom:10, borderColor: 'gray', borderWidth: 1, padding: 8 }} >
+            {profile.email}
+          </Text>
+          <Text>Statement</Text>
+          <TextInput
+            defaultValue={"Enter more details here."}
+            multiline={true}
+            onChangeText={(statementContent) => this.setState({statementContent: statementContent})}
+            value={this.state.statementContent}
+            style={{marginLeft: 20, marginRight: 20, marginBottom:10, height: 216, borderColor: 'gray', borderWidth: 1, padding: 8 }}
             />
-            <Text>Email Address</Text>
-            <TextInput
-              style={{marginLeft: 20, marginRight: 20, marginBottom:10, height: 20, borderColor: 'gray', borderWidth: 1}}
-              onChangeText={(text) => this.setState({email: text})}
-              value={this.state.email}
-              defaultValue={profile.email}
-            />
-            <Text>Further Details</Text>
-            <TextInput
-              defaultValue={"Enter more details here."}
-              multiline={true}
-              onChangeText={(text) => this.setState({text: text})}
-              value={this.state.text}
-              style={{marginLeft: 20, marginRight: 20, marginBottom:10, height: 200, borderColor: 'gray', borderWidth: 1}}
-            />
-            <TouchableHighlight
-              style={styles.button}
-              underlayColor="#A5A5A5"
-              onPress={this.sendDetails}>
-              <Text style={styles.buttonText}>Send details</Text>
-            </TouchableHighlight>
-          </View>
-        )
+          <TouchableHighlight
+            style={styles.button}
+            underlayColor="#A5A5A5"
+            onPress={this.handleSubmitStatement}>
+            <Text style={styles.buttonText}>Send details</Text>
+          </TouchableHighlight>
+        </View>
+      )
       case 'List of Reports':
-        console.log(reports);
-        return (
-            <ListView
-              dataSource={this.state.dataSource}
-              renderRow={this.renderReport}
-              style={styles.listView}
-            />
-        );
+      return (
+        <ListView
+          dataSource={this.state.dataSource}
+          renderRow={this.renderReport}
+          style={styles.listView}
+          />
+      );
     }
   }
 
   renderReport(report) {
     return (
       <View style={styles.container}>
-        <Text style={styles.title}>{report.details}</Text>
+        <Text style={styles.title}>{report.content}</Text>
         <Text style={styles.year}>{report.progress}</Text>
       </View>
     )
@@ -325,9 +334,9 @@ class NavigationBarSample extends Component {
           <Navigator.NavigationBar
             routeMapper={NavigationBarRouteMapper}
             style={styles.navBar}
-          />
+            />
         }
-      />
+        />
     );
   }
 
@@ -428,7 +437,7 @@ class CrimeReporter extends Component {
         <FacebookLogin
           onLogin={ this.handleFacebookLogin }
           onLogout={ this.handleFacebookLogout }
-        />
+          />
         { profile &&
           <Text>
             { `ID:\t${profile.id}\nName:\t${profile.name}\nEmail:\t${profile.email}` }
@@ -459,9 +468,9 @@ class CrimeReporter extends Component {
                   navigator.pop()
                 }
               }}
-            />
+              />
           }}
-        />
+          />
       </View>
     )
   };
