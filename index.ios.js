@@ -4,6 +4,7 @@
  */
 'use strict';
 import React, {
+  Alert,
   AppRegistry,
   Component,
   Navigator,
@@ -12,7 +13,6 @@ import React, {
   View
 } from 'react-native';
 
-import Token from './src/components/GetAuthToken.js'
 import FacebookLogin from './src/components/FacebookLogin.js'
 import AppRouter from './src/AppRouter.js'
 
@@ -27,7 +27,8 @@ const styles = StyleSheet.create({
   }
 });
 
-const HOST_URL = 'http://localhost:3000';
+// const HOST_URL = 'http://localhost:3000'
+const HOST_URL = 'https://crimereporter.herokuapp.com'
 
 class CrimeReporter extends Component {
 
@@ -56,12 +57,37 @@ class CrimeReporter extends Component {
     Identity.write('FacebookEmail', p.email, Identity.db);
     this.setState({
       facebookProfile: p
-    })
+    }, this.handleLogin )
   };
 
   handleFacebookLogout = () => {
+    Identity.delete('FacebookId', Identity.db);
+    Identity.delete('FacebookName', Identity.db);
+    Identity.delete('FacebookEmail', Identity.db);
     this.setState({
       facebookProfile: null
+    })
+  };
+
+  handleLogin = () => {
+    let profile = this.state.facebookProfile;
+    fetch(`${HOST_URL}/users/sign_in`, {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json',
+        'X-CSRF-Token': this.state.token,
+      },
+      body: JSON.stringify({
+        email: profile.email,
+        facebook_id: profile.id
+      })
+    }).then((res) => {
+      let user = JSON.parse(res._bodyText).user
+      console.log("Retrieved user\t" + JSON.stringify(user));
+      Identity.write('UserAuthToken', user.auth_token, Identity.db);
+    }).catch((err) => {
+      console.log(err);
     })
   };
 

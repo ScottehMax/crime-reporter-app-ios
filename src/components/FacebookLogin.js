@@ -1,4 +1,5 @@
 import React, {
+  Alert,
   Component,
   View
 } from 'react-native';
@@ -16,19 +17,22 @@ export default class FacebookLogin extends Component {
         <FBSDKLoginButton
           onLoginFinished={(error, result) => {
             if (error) {
-              alert('Error logging in.');
+              console.log(error);
+              Alert.alert('Error logging in.');
+            } else if (result.isCancelled) {
+              Alert.alert('Login cancelled.');
             } else {
-              if (result.isCancelled) {
-                alert('Login cancelled.');
-              } else {
-                new FBSDKGraphRequest((error, result) => {
-                  if (error) {
-                    alert('Error making request.');
-                  } else {
-                    onLogin(result)
-                  }
-                }, '/me?fields=id,name,email').start()
-              }
+              let requestFunc = (error, result) => {
+                if (error) {
+                  Alert.alert('Error making request.');
+                } else {
+                  onLogin(result)
+                }
+              };
+              new FBSDKGraphRequest(
+                requestFunc,
+                '/me?fields=id,name,email'
+              ).start()
             }
           }}
           onLogoutFinished={ onLogout }
