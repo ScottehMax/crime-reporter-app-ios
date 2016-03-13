@@ -23,6 +23,8 @@
 		1839D96B1C94914300621CAE /* libreact-native-fbsdkshare.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1839D9611C94914300621CAE /* libreact-native-fbsdkshare.a */; };
 		1839D96C1C94914300621CAE /* libReact.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1839D9621C94914300621CAE /* libReact.a */; };
 		2F7D34B490A1CBDA71BE1AC1 /* libPods.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E12FA8D531800DE20D032FC9 /* libPods.a */; };
+		9704ED191C94C8C2001CFB2B /* RealmReact.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 9704ED181C94C88C001CFB2B /* RealmReact.framework */; };
+		9704ED1A1C94C8C2001CFB2B /* RealmReact.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 9704ED181C94C88C001CFB2B /* RealmReact.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,7 +35,63 @@
 			remoteGlobalIDString = 13B07F861A680F5B00A75B9A;
 			remoteInfo = CrimeReporter;
 		};
+		9704ED0F1C94C88C001CFB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9704ED061C94C88C001CFB2B /* RealmJS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F63FF2F01C16405C00B3B8E0;
+			remoteInfo = GCDWebServers;
+		};
+		9704ED111C94C88C001CFB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9704ED061C94C88C001CFB2B /* RealmJS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = F63FF2B11C1241E500B3B8E0;
+			remoteInfo = "RealmJS static";
+		};
+		9704ED131C94C88C001CFB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9704ED061C94C88C001CFB2B /* RealmJS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 02B58CB11AE99CEC009B348C;
+			remoteInfo = RealmJS;
+		};
+		9704ED151C94C88C001CFB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9704ED061C94C88C001CFB2B /* RealmJS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 02B58CBC1AE99CEC009B348C;
+			remoteInfo = RealmJSTests;
+		};
+		9704ED171C94C88C001CFB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9704ED061C94C88C001CFB2B /* RealmJS.xcodeproj */;
+			proxyType = 2;
+			remoteGlobalIDString = 02B29A161B7CF7C9008A7E6B;
+			remoteInfo = RealmReact;
+		};
+		9704ED1B1C94C8C2001CFB2B /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 9704ED061C94C88C001CFB2B /* RealmJS.xcodeproj */;
+			proxyType = 1;
+			remoteGlobalIDString = 02B29A151B7CF7C9008A7E6B;
+			remoteInfo = RealmReact;
+		};
 /* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		9704ED1D1C94C8C2001CFB2B /* Embed Frameworks */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 10;
+			files = (
+				9704ED1A1C94C8C2001CFB2B /* RealmReact.framework in Embed Frameworks */,
+			);
+			name = "Embed Frameworks";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
@@ -59,6 +117,7 @@
 		1839D9621C94914300621CAE /* libReact.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libReact.a; path = "Pods/../build/Debug-iphoneos/libReact.a"; sourceTree = "<group>"; };
 		2B4AED7E81980CF905B40150 /* Pods.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.debug.xcconfig; path = "Pods/Target Support Files/Pods/Pods.debug.xcconfig"; sourceTree = "<group>"; };
 		54A3795BCC9CCBE552F0A328 /* Pods.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = Pods.release.xcconfig; path = "Pods/Target Support Files/Pods/Pods.release.xcconfig"; sourceTree = "<group>"; };
+		9704ED061C94C88C001CFB2B /* RealmJS.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RealmJS.xcodeproj; path = ../node_modules/realm/RealmJS.xcodeproj; sourceTree = "<group>"; };
 		E12FA8D531800DE20D032FC9 /* libPods.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = libPods.a; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -74,6 +133,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				9704ED191C94C8C2001CFB2B /* RealmReact.framework in Frameworks */,
 				1839D9631C94914300621CAE /* libBolts.a in Frameworks */,
 				1839D9641C94914300621CAE /* libFBSDKCoreKit.a in Frameworks */,
 				1839D9651C94914300621CAE /* libFBSDKLoginKit.a in Frameworks */,
@@ -134,6 +194,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				9704ED051C94C870001CFB2B /* Libraries */,
 				13B07FAE1A68108700A75B9A /* CrimeReporter */,
 				00E356EF1AD99517003FC87E /* CrimeReporterTests */,
 				83CBBA001A601CBA00E9B192 /* Products */,
@@ -149,6 +210,26 @@
 			children = (
 				13B07F961A680F5B00A75B9A /* CrimeReporter.app */,
 				00E356EE1AD99517003FC87E /* CrimeReporterTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		9704ED051C94C870001CFB2B /* Libraries */ = {
+			isa = PBXGroup;
+			children = (
+				9704ED061C94C88C001CFB2B /* RealmJS.xcodeproj */,
+			);
+			name = Libraries;
+			sourceTree = "<group>";
+		};
+		9704ED071C94C88C001CFB2B /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				9704ED101C94C88C001CFB2B /* libGCDWebServers.a */,
+				9704ED121C94C88C001CFB2B /* libRealmJS.a */,
+				9704ED141C94C88C001CFB2B /* RealmJS.framework */,
+				9704ED161C94C88C001CFB2B /* RealmJSTests.xctest */,
+				9704ED181C94C88C001CFB2B /* RealmReact.framework */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -202,10 +283,12 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				27225BEE2B626A8BAB8F05AA /* Embed Pods Frameworks */,
 				D8EE857596D4987CBE493E2E /* Copy Pods Resources */,
+				9704ED1D1C94C8C2001CFB2B /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
+				9704ED1C1C94C8C2001CFB2B /* PBXTargetDependency */,
 			);
 			name = CrimeReporter;
 			productName = "Hello World";
@@ -241,6 +324,12 @@
 			mainGroup = 83CBB9F61A601CBA00E9B192;
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 9704ED071C94C88C001CFB2B /* Products */;
+					ProjectRef = 9704ED061C94C88C001CFB2B /* RealmJS.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				13B07F861A680F5B00A75B9A /* CrimeReporter */,
@@ -248,6 +337,44 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXReferenceProxy section */
+		9704ED101C94C88C001CFB2B /* libGCDWebServers.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libGCDWebServers.a;
+			remoteRef = 9704ED0F1C94C88C001CFB2B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9704ED121C94C88C001CFB2B /* libRealmJS.a */ = {
+			isa = PBXReferenceProxy;
+			fileType = archive.ar;
+			path = libRealmJS.a;
+			remoteRef = 9704ED111C94C88C001CFB2B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9704ED141C94C88C001CFB2B /* RealmJS.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = RealmJS.framework;
+			remoteRef = 9704ED131C94C88C001CFB2B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9704ED161C94C88C001CFB2B /* RealmJSTests.xctest */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.cfbundle;
+			path = RealmJSTests.xctest;
+			remoteRef = 9704ED151C94C88C001CFB2B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+		9704ED181C94C88C001CFB2B /* RealmReact.framework */ = {
+			isa = PBXReferenceProxy;
+			fileType = wrapper.framework;
+			path = RealmReact.framework;
+			remoteRef = 9704ED171C94C88C001CFB2B /* PBXContainerItemProxy */;
+			sourceTree = BUILT_PRODUCTS_DIR;
+		};
+/* End PBXReferenceProxy section */
 
 /* Begin PBXResourcesBuildPhase section */
 		00E356EC1AD99517003FC87E /* Resources */ = {
@@ -342,6 +469,11 @@
 			target = 13B07F861A680F5B00A75B9A /* CrimeReporter */;
 			targetProxy = 00E356F41AD99517003FC87E /* PBXContainerItemProxy */;
 		};
+		9704ED1C1C94C8C2001CFB2B /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = RealmReact;
+			targetProxy = 9704ED1B1C94C8C2001CFB2B /* PBXContainerItemProxy */;
+		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
@@ -411,6 +543,7 @@
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
 				INFOPLIST_FILE = CrimeReporter/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -437,6 +570,7 @@
 					"$(SRCROOT)/../node_modules/react-native/React/**",
 				);
 				INFOPLIST_FILE = CrimeReporter/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
